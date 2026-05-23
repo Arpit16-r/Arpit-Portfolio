@@ -30,6 +30,11 @@
 
   html { scroll-behavior: smooth; }
 
+  html, body {
+    overflow-x: hidden;
+    max-width: 100vw;
+  }
+
   body {
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
     background: var(--bg);
@@ -39,6 +44,8 @@
     font-feature-settings: 'cv11', 'ss01', 'ss03';
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    position: relative;
+    width: 100%;
   }
 
   /* Animated grid background */
@@ -62,7 +69,7 @@
     top: -300px;
     left: 50%;
     transform: translateX(-50%);
-    width: 1200px;
+    width: min(1200px, 100vw);
     height: 800px;
     background: radial-gradient(ellipse at center, rgba(102, 126, 234, 0.12) 0%, transparent 60%);
     pointer-events: none;
@@ -163,12 +170,16 @@
     padding: 0 32px;
     position: relative;
     z-index: 1;
+    width: 100%;
+    box-sizing: border-box;
   }
 
   /* Section */
   section {
     padding: 100px 0;
     position: relative;
+    overflow-x: hidden;
+    max-width: 100vw;
   }
 
   .section-label {
@@ -238,6 +249,8 @@
     font-size: 13px;
     color: var(--text-secondary);
     margin-bottom: 32px;
+    max-width: 100%;
+    flex-wrap: wrap;
   }
 
   .hero-badge .pill {
@@ -432,6 +445,7 @@
     border-bottom: 1px solid var(--border);
     overflow: hidden;
     position: relative;
+    max-width: 100%;
   }
 
   .metrics-marquee::before, .metrics-marquee::after {
@@ -751,6 +765,7 @@
     position: relative;
     overflow: hidden;
     padding: 8px 0;
+    max-width: 100%;
   }
 
   .skill-marquee::before,
@@ -1099,6 +1114,7 @@
     margin: 0 auto;
     position: relative;
     overflow: hidden;
+    box-sizing: border-box;
   }
 
   .contact-card::before {
@@ -1213,11 +1229,137 @@
     transform: translateY(0);
   }
 
-  /* Responsive */
+
+  /* Hamburger button — hidden on desktop, shown on mobile */
+  .nav-hamburger {
+    display: none;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid var(--border-strong);
+    border-radius: 100px;
+    width: 34px;
+    height: 34px;
+    cursor: pointer;
+    padding: 0;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 4px;
+    flex-shrink: 0;
+    transition: background 0.2s ease;
+  }
+
+  .nav-hamburger:hover {
+    background: rgba(255,255,255,0.12);
+  }
+
+  .nav-hamburger span {
+    display: block;
+    width: 14px;
+    height: 1.5px;
+    background: var(--text);
+    border-radius: 1px;
+  }
+
+  /* Mobile fullscreen menu overlay */
+  .mobile-menu {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(10, 10, 10, 0.96);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    z-index: 200;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 40px 20px;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+  }
+
+  .mobile-menu.open {
+    display: flex;
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .mobile-menu-close {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    width: 40px;
+    height: 40px;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid var(--border-strong);
+    border-radius: 50%;
+    color: var(--text);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s ease;
+  }
+
+  .mobile-menu-close:hover {
+    background: rgba(255,255,255,0.12);
+  }
+
+  .mobile-menu-links {
+    list-style: none;
+    text-align: center;
+    margin: 0;
+    padding: 0;
+  }
+
+  .mobile-menu-links li {
+    margin-bottom: 8px;
+  }
+
+  .mobile-menu-links a {
+    display: block;
+    font-size: 32px;
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    color: var(--text);
+    text-decoration: none;
+    padding: 12px 0;
+    transition: color 0.2s ease;
+  }
+
+  .mobile-menu-links a:hover {
+    color: var(--text-secondary);
+  }
+
+  .mobile-menu-footer {
+    position: absolute;
+    bottom: 40px;
+    left: 0;
+    right: 0;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding: 0 20px;
+  }
+
+  .mobile-menu-footer a {
+    color: var(--text-secondary);
+    text-decoration: none;
+    font-size: 14px;
+    transition: color 0.2s ease;
+  }
+
+  .mobile-menu-footer a:hover {
+    color: var(--text);
+  }
+
+  /* ========== RESPONSIVE: TABLET (900px and below) ========== */
   @media (max-width: 900px) {
     nav {
       top: 12px;
       padding: 6px 6px 6px 14px;
+      max-width: calc(100% - 24px);
     }
     nav .logo { font-size: 13px; margin-right: 8px; }
     nav ul { gap: 0; }
@@ -1226,12 +1368,13 @@
 
     .hero-grid {
       grid-template-columns: 1fr;
-      gap: 40px;
+      gap: 36px;
     }
 
     .hero-photo {
       max-width: 320px;
       margin: 0 auto;
+      order: -1;  /* show photo above text on mobile */
     }
 
     .about-grid,
@@ -1248,16 +1391,243 @@
     }
 
     section { padding: 70px 0; }
-
     .container { padding: 0 20px; }
 
     .timeline { padding-left: 30px; }
     .timeline-item::before { left: -25px; }
   }
 
+  /* ========== RESPONSIVE: MOBILE (600px and below) ========== */
   @media (max-width: 600px) {
+    /* Nav: hide section links, keep only essentials */
     nav ul { display: none; }
-    .hero { padding-top: 100px; }
+    nav {
+      top: 10px;
+      padding: 5px 5px 5px 14px;
+      gap: 6px;
+      max-width: calc(100vw - 20px);
+      flex-wrap: nowrap;
+      box-sizing: border-box;
+    }
+    nav .logo { font-size: 13px; margin-right: 4px; flex-shrink: 0; }
+    nav .cta {
+      padding: 6px 11px;
+      font-size: 11px;
+      flex-shrink: 0;
+      white-space: nowrap;
+    }
+    /* Hide "Get in touch" CTA on mobile to make room for hamburger */
+    nav > a.cta:not(.cta-resume) {
+      display: none;
+    }
+    nav .cta-resume {
+      padding: 6px 10px;
+      font-size: 11px;
+      flex-shrink: 0;
+      white-space: nowrap;
+    }
+    nav .cta-resume svg { width: 11px; height: 11px; flex-shrink: 0; }
+    /* Show hamburger on mobile */
+    .nav-hamburger {
+      display: flex;
+    }
+
+    /* Hero typography scales down hard */
+    .hero { padding-top: 90px; padding-bottom: 50px; }
+    .hero h1 {
+      font-size: clamp(30px, 9vw, 44px);
+      line-height: 1.05;
+      letter-spacing: -0.03em;
+      word-wrap: break-word;
+      overflow-wrap: break-word;
+    }
+    .hero p.tagline {
+      font-size: 16px;
+    }
+    .hero-badge {
+      font-size: 11px;
+      margin-bottom: 24px;
+    }
+    .hero-badge .pill {
+      font-size: 10px;
+      padding: 3px 8px;
+    }
+    .hero-photo {
+      width: 100%;
+      max-width: 280px;
+      min-height: 350px;
+      aspect-ratio: 4/5;
+      margin: 0 auto;
+    }
+    /* Ensure the hero image always fills its container on mobile */
+    .hero-img {
+      display: block;
+      width: 100% !important;
+      height: 100% !important;
+    }
+    .floating-tag {
+      font-size: 10px;
+      padding: 7px 10px;
+    }
+    .floating-tag.tag-1 {
+      top: 15px;
+      left: 8px;
+    }
+    .floating-tag.tag-2 {
+      bottom: 40px;
+      right: 8px;
+    }
+
+    /* Hero CTAs: stack vertically and full-width */
+    .hero-cta {
+      flex-direction: column;
+      width: 100%;
+      gap: 10px;
+    }
+    .hero-cta a {
+      width: 100%;
+      justify-content: center;
+    }
+
+    /* Metrics marquee */
+    .metrics-marquee {
+      margin-top: 50px;
+      padding: 18px 0;
+    }
+    .marquee-item {
+      font-size: 13px;
+    }
+    .marquee-item strong {
+      font-size: 14px;
+    }
+
+    /* Sections: tighter spacing */
+    section { padding: 50px 0; }
+    .container { padding: 0 16px; }
+    .section-title {
+      font-size: clamp(30px, 8vw, 42px);
+    }
+    .section-subtitle {
+      font-size: 15px;
+      margin-bottom: 36px;
+    }
+
+    /* About */
+    .about-grid { gap: 32px; }
+    .about-text p { font-size: 15px; }
+    .stat-card { padding: 18px; }
+    .stat-card .stat-value { font-size: 28px; }
+    .stat-card .stat-label { font-size: 12px; }
+
+    /* Timeline */
+    .timeline-item {
+      padding: 20px;
+    }
+    .timeline-header {
+      gap: 8px;
+    }
+    .timeline-header-left {
+      gap: 12px;
+    }
+    .company-logo {
+      width: 44px;
+      height: 44px;
+      padding: 6px;
+    }
+    .timeline-company { font-size: 17px; }
+    .timeline-role { font-size: 12px; }
+    .timeline-date {
+      font-size: 11px;
+      padding: 4px 10px;
+    }
+    .timeline-bullets li {
+      font-size: 13.5px;
+      margin-bottom: 8px;
+      padding-left: 14px;
+    }
+
+    /* Skills marquee: smaller tiles on mobile so more fit on screen */
+    .skill-marquee-label {
+      font-size: 10px;
+      left: 16px;
+      padding: 3px 8px;
+    }
+    .skill-marquee-track { gap: 20px; }
+    .skill-logo {
+      min-width: 92px;
+      padding: 14px 12px;
+      gap: 8px;
+    }
+    .skill-logo-white .logo-tile,
+    .skill-logo-dark .logo-tile-dark {
+      width: 38px;
+      height: 38px;
+    }
+    .skill-logo img { width: 24px; height: 24px; }
+    .skill-logo p { font-size: 10px; }
+
+    /* Projects */
+    .project-card { padding: 22px; border-radius: 18px; }
+    .project-card.featured .project-visual,
+    .project-card .project-visual { aspect-ratio: 16/10; margin-bottom: 18px; }
+    .project-visual-content .big-number { font-size: 44px; }
+    .project-visual-content .big-label { font-size: 12px; }
+    .project-title { font-size: 19px; }
+    .project-desc { font-size: 13.5px; margin-bottom: 16px; }
+    .project-tag { font-size: 11px; padding: 3px 8px; }
+    .project-arrow { width: 30px; height: 30px; }
+    .project-status { font-size: 10px; }
+
+    /* Achievements */
+    .achievement-card { padding: 22px; border-radius: 18px; }
+    .achievement-icon { width: 40px; height: 40px; font-size: 20px; margin-bottom: 16px; }
+    .achievement-title { font-size: 15px; }
+    .achievement-meta { font-size: 11px; }
+    .achievement-desc { font-size: 13px; }
+
+    /* Contact */
+    .contact-section { padding: 70px 0 60px; }
+    .contact-card {
+      padding: 50px 24px;
+      border-radius: 24px;
+    }
+    .contact-card h2 { font-size: clamp(30px, 8vw, 42px); }
+    .contact-card p { font-size: 15px; margin-bottom: 28px; }
+    .contact-links {
+      flex-direction: column;
+      gap: 10px;
+    }
+    .contact-links a {
+      width: 100%;
+      justify-content: center;
+    }
+
+    /* Footer */
+    footer { padding: 30px 0; font-size: 12px; }
+
+    /* Disable parallax-y effects that feel weird on touch */
+    .timeline-item:hover {
+      transform: none;
+    }
+    .project-card:hover {
+      transform: none;
+    }
+  }
+
+  /* ========== RESPONSIVE: TINY SCREENS (380px and below — iPhone SE, narrow Androids) ========== */
+  @media (max-width: 380px) {
+    nav .logo { display: none; }
+    nav .cta-resume span,
+    nav .cta-resume {
+      font-size: 10.5px;
+      padding: 5px 9px;
+    }
+    nav .cta { font-size: 10.5px; padding: 5px 10px; }
+    .hero h1 { font-size: 34px; }
+    .hero p.tagline { font-size: 15px; }
+    .container { padding: 0 14px; }
+    .timeline-item { padding: 16px; }
+    .company-logo { width: 40px; height: 40px; }
   }
 </style>
 </head>
@@ -1280,7 +1650,31 @@
     Resume
   </a>
   <a href="#contact" class="cta">Get in touch →</a>
+  <button class="nav-hamburger" id="nav-hamburger" aria-label="Open menu">
+    <span></span>
+    <span></span>
+    <span></span>
+  </button>
 </nav>
+
+<!-- Mobile menu overlay -->
+<div class="mobile-menu" id="mobile-menu">
+  <button class="mobile-menu-close" id="mobile-menu-close" aria-label="Close menu">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+  </button>
+  <ul class="mobile-menu-links">
+    <li><a href="#about">About</a></li>
+    <li><a href="#experience">Experience</a></li>
+    <li><a href="#skills">Skills</a></li>
+    <li><a href="#projects">Projects</a></li>
+    <li><a href="#achievements">Achievements</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+  <div class="mobile-menu-footer">
+    <a href="mailto:arpit123rastogi@gmail.com">arpit123rastogi@gmail.com</a>
+    <a href="https://www.linkedin.com/in/arpitras/" target="_blank" rel="noopener">LinkedIn ↗</a>
+  </div>
+</div>
 
 <!-- Hero -->
 <section class="hero">
@@ -1907,6 +2301,29 @@
 </footer>
 
 <script>
+  // Mobile menu toggle
+  const hamburger = document.getElementById('nav-hamburger');
+  const mobileMenu = document.getElementById('mobile-menu');
+  const mobileMenuClose = document.getElementById('mobile-menu-close');
+  const mobileMenuLinks = document.querySelectorAll('.mobile-menu-links a');
+
+  function openMobileMenu() {
+    mobileMenu.classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+  function closeMobileMenu() {
+    mobileMenu.classList.remove('open');
+    document.body.style.overflow = '';
+  }
+
+  if (hamburger) hamburger.addEventListener('click', openMobileMenu);
+  if (mobileMenuClose) mobileMenuClose.addEventListener('click', closeMobileMenu);
+  mobileMenuLinks.forEach((link) => {
+    link.addEventListener('click', () => {
+      setTimeout(closeMobileMenu, 100);
+    });
+  });
+
   // Scroll-triggered fade-in
   const observer = new IntersectionObserver((entries) => {
     entries.forEach((entry) => {
